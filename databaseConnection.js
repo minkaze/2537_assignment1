@@ -1,18 +1,10 @@
-const { MongoClient } = require('mongodb');
 require('dotenv').config();
 
-const mongoUrl = `mongodb+srv://${process.env.MONGODB_USER}:${process.env.MONGODB_PASSWORD}@${process.env.MONGODB_HOST}/${process.env.MONGODB_DATABASE}`;
+const mongodb_host = process.env.MONGODB_HOST;
+const mongodb_user = process.env.MONGODB_USER;
+const mongodb_password = process.env.MONGODB_PASSWORD;
 
-const client = new MongoClient(mongoUrl);
-
-let db = null;
-
-async function connectToDatabase() {
-    if (!db) {
-        await client.connect();
-        db = client.db(process.env.MONGODB_DATABASE);
-    }
-    return db;
-}
-
-module.exports = connectToDatabase;
+const MongoClient = require("mongodb").MongoClient;
+const atlasURI = `mongodb+srv://${mongodb_user}:${mongodb_password}@${mongodb_host}/?retryWrites=true`;
+var database = new MongoClient(atlasURI, {});
+module.exports = {database};
