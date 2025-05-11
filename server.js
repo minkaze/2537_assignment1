@@ -38,7 +38,7 @@ var mongoStore = MongoStore.create({
     crypto: {
         secret: mongodb_session_secret
     }
-})
+});
 
 app.use(session({
     secret: node_session_secret,
@@ -59,10 +59,14 @@ const loginSchema = Joi.object({
     password: Joi.string().max(50).required(),
 });
 
-function isAdmin(req, res, next) {
+function isAuthenticated(req, res, next) {
     if (!req.session.user) {
         return res.redirect('/login');
     }
+    next();
+}
+
+function isAdmin(req, res, next) {
     if (req.session.user.user_type != 'admin') {
         return res.status(403).render('403', { user: req.session.user });
     }
@@ -143,20 +147,17 @@ app.post('/loggingin', async (req, res) => {
     res.redirect('/members');
 });
 
-app.get('/members', (req, res) => {
-    if (!req.session.user) {
-        return res.redirect('/');
-    }
+app.get('/members', isAuthenticated, (req, res) => {
     const images = ['cat1.webp', 'cat2.png', 'cat3.jpg'];
     res.render('members', { user: req.session.user, images });
 });
 
-app.get('/admin', isAdmin, async (req, res) => {
+app.get('/admin', isAuthenticated, isAdmin, async (req, res) => {
     const users = await userCollection.find().toArray();
     res.render('admin', { user: req.session.user, users });
 });
 
-app.get('/promote/:email', isAdmin, async (req, res) => {
+app.get('/promote/:email', isAuthenticated, isAdmin, async (req, res) => {
     const { email } = req.params;
     const { error } = Joi.string().email().required().validate(email);
     if (error) {
@@ -174,7 +175,7 @@ app.get('/promote/:email', isAdmin, async (req, res) => {
     }
 });
 
-app.get('/demote/:email', isAdmin, async (req, res) => {
+app.get('/demote/:email', isAuthenticated, isAdmin, async (req, res) => {
     const { email } = req.params;
     const { error } = Joi.string().email().required().validate(email);
     if (error) {
@@ -192,7 +193,7 @@ app.get('/demote/:email', isAdmin, async (req, res) => {
     }
 });
 
-app.get('/logout', (req, res) => {
+app.get('/logout', isAuthenticated, (req, res) => {
     req.session.destroy(() => {
         res.redirect('/');
     });
