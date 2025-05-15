@@ -1,0 +1,29 @@
+<%- include('templates/header') %>
+
+<h1 class="mb-4">Sign Up</h1>
+<form action="/signupSubmit" method="POST" class="needs-validation" novalidate>
+    <div class="mb-3">
+        <label for="name" class="form-label">Name</label>
+        <input type="text" class="form-control" id="name" name="name" placeholder="name" required>
+        <div class="invalid-feedback">Please provide a name.</div>
+    </div>
+    <div class="mb-3">
+        <label for="email" class="form-label">Email</label>
+        <input type="email" class="form-control" id="email" name="email" placeholder="email" required>
+        <div class="invalid-feedback">Please provide a valid email address.</div>
+    </div>
+    <div class="mb-3">
+        <label for="password" class="form-label">Password</label>
+        <input type="password" class="form-control" id="password" name="password" placeholder="password" required>
+        <div class="invalid-feedback">Please provide a password.</div>
+    </div>
+    <button type="submit" class="btn btn-primary">Submit</button>
+</form>
+<% if (error) { %>
+    <div class="alert alert-danger mt-3" role="alert">
+        <%= error %>
+        <a href="/signup" class="alert-link">Try again</a>
+    </div>
+<% } %>
+
+<%- include('templates/footer') %>

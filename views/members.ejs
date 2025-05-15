@@ -1,0 +1,15 @@
+<%- include('templates/header') %>
+
+<h1 class="mb-4">Hello, <%= user.name %>!</h1>
+<div class="row row-cols-1 row-cols-md-3 g-4">
+    <% images.forEach(image=> { %>
+        <div class="col">
+            <div class="card">
+                <img src="<%= image %>" class="card-img-top" alt="Cat Image">
+            </div>
+        </div>
+    <% }) %>
+</div>
+<a href="/logout" class="btn btn-secondary mt-4">Logout</a>
+
+<%- include('templates/footer') %>
